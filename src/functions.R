@@ -16,7 +16,7 @@ filter_k_3 <- function(.data) {
 
 # Filter function to return only high school (Gr 10-12)
 filter_hs <- function(.data) {
-  .data %>% filter(GradeGroup_id == 1)
+  .data %>% filter(GradeGroup_id == 4)
 }
 
 summarize_student_pop <- function (.data, key) {

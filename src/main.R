@@ -18,7 +18,7 @@ hs.core.metro <- public_only %>% filter_metro() %>% filter_hs() %>% filter(IsCor
 plot.k3.all_public <- plot_heatmap(k3.all_public, "Alberta K-3 Class Sizes, All School Boards")
 plot.k3.metro <- plot_heatmap(k3.metro, "Alberta K-3 Class Sizes, Metro School Boards")
 plot.k3.nonmetro <- plot_heatmap(k3.nonmetro, "Alberta K-3 Class Sizes, Non-Metro School Boards")
-plot.hs.core.metro <- plot_heatmap(hs.core.metro, "Alberta 10-12 Class Sizes, Core Subjects, Metro School Boards")
+plot.hs.core.metro <- plot_heatmap_hs(hs.core.metro, "Alberta 10-12 Class Sizes, Core Subjects, Metro School Boards")
 
 # Save plots
 save_heatmap("images/k3_allpublic.png", plot.k3.all_public)
