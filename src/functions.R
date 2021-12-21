@@ -29,30 +29,31 @@ summarize_cls_sizes_by_yr <- function(.data) {
 }
 
 ### Plots
-plot_heatmap <- function(.data, title) {
-  ggplot(.data, aes(sch_yr, nbr_students)) + geom_tile(aes(fill = proportion_in_bin)) +
-    scale_fill_viridis_c(option="B", na.value="black", labels=scales::percent_format(accuracy=1), limits=c(0,0.127)) +  
-    guides(fill=guide_legend(title="Proportion of Student Population (%)")) +
-    ylim(9,31) +
-    geom_text(data=.data %>% filter(sch_yr == 2006), label="ACOL Recommendation", y=17, color="white", hjust="left", vjust="top", nudge_x=0.2) +
-    geom_hline(yintercept=17, color="white") +
-    theme_ft_rc() + 
+plot_heatmap <- function(.data, title, ylims=c(9,31), pop_lims=NULL, acol_recommendation=17) {
+  
+  pop_mean = .data %>% mutate(pop_mean = nbr_students * proportion_in_bin) %>% group_by(sch_yr) %>% summarise(pop_mean = sum(pop_mean))
+  
+  ggplot(.data, aes(sch_yr, nbr_students)) + 
+    geom_tile(aes(fill = proportion_in_bin)) +
+    scale_fill_viridis_c(option="B", labels=scales::percent_format(accuracy=1), limits=pop_lims) +  
+    guides(fill=guide_colorbar(title="Proportion of Student Pop. (%)")) +
+    scale_y_continuous(limits = ylims, expand = c(0, 0)) +
+    geom_line(data=pop_mean, aes(x=sch_yr, y=pop_mean, group=1, color="Pop. Mean"), size=1.4) +
+    geom_hline(aes(yintercept=acol_recommendation, color="ACOL Recommendation"), size=1.4) +
+    scale_color_manual(name=NULL, values=c(ft_cols$red, ft_cols$white)) +
+    theme_ft_rc(
+      grid=FALSE
+      ) + 
     labs(title = title,
-         x = "Year", y = "Class Size", caption="Created by: @SeanDunn10\nData Source: Alberta Class Size Information System") +
-    theme(plot.margin = margin(10,10,10,10), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title.position="plot", plot.caption.position = "plot", legend.position="top")
-}
-
-plot_heatmap_hs <- function(.data, title) {
-  ggplot(.data, aes(sch_yr, nbr_students)) + geom_tile(aes(fill = proportion_in_bin)) +
-    scale_fill_viridis_c(option="B", na.value="black", labels=scales::percent_format(accuracy=1), limits=c(0,0.11)) +  
-    guides(fill=guide_legend(title="Proportion of Student Population (%)")) +
-    ylim(19,41) +
-    theme_ft_rc() + 
-    labs(title = title,
-         x = "Year", y = "Class Size", caption="Created by: @SeanDunn10\nData Source: Alberta Class Size Information System") +
-    theme(plot.margin = margin(10,10,10,10), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title.position="plot", plot.caption.position = "plot", legend.position="top")
+         x = "Year", 
+         y = "Class Size", 
+         caption="Created by: @SeanDunn10\nData Source: Alberta Class Size Information System") +
+    theme(plot.margin = margin(10,10,10,10),
+          plot.title.position="plot",
+          plot.caption.position = "plot",
+          legend.position="top")
 }
 
 save_heatmap <- function(filepath, plot) {
-  ggsave(filepath, plot, width=8, height=4.5)
+  ggsave(filepath, plot, width=8, height=6)
 }
